@@ -185,30 +185,27 @@ class FilmorateApplicationTests {
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is(200));
-   //             .andExpect(content().string(containsString("Hello, World")));
     }
 
-    @Test
-    void testingTest() throws Exception {
-        LocalDate date = LocalDate.of(1982,8,2);
-        User user = new User();
-        user.setName("somename");
-        user.setId(0);
-        user.setBirthday(date);
-        user.setEmail("some@email.com");
-        user.setLogin("somelogin");
-
-        String body = mapper.writeValueAsString(user);
-        when(userController.create(user)).thenCallRealMethod();
-        mockMvc.perform(MockMvcRequestBuilders.post("/users")
-                        .content(body)
-                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(200))
-                .andExpect(content().string(containsString("Hello, World")));
-
-    }
-
+//    @Test
+//    void testingTest() throws Exception {
+//        LocalDate date = LocalDate.of(1982,8,2);
+//        User user = new User();
+//        user.setName("somename");
+//        user.setId(0);
+//        user.setBirthday(date);
+//        user.setEmail("some@email.com");
+//        user.setLogin("somelogin");
+//
+//        String body = mapper.writeValueAsString(user);
+//        when(userController.create(user)).thenCallRealMethod();
+//        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+//                        .content(body)
+//                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().is(200))
+//                .andExpect(content().string(containsString("Hello, World")));
+//
+//    }
     
-
 }
 

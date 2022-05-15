@@ -6,10 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validations.ValidationException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.List;
@@ -18,14 +20,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private HashMap<Integer, User> users = new HashMap<>();
+    private final Map<Integer, User> users = new HashMap<Integer, User>();
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private int counter = 0;
     //   Logbook logbook = Logbook.create();
 
     @GetMapping
     public List<User> findAll() {
-        return (List<User>) users.values();
+        return new ArrayList<>(users.values());
     }
 
 
@@ -39,7 +41,8 @@ public class UserController {
               user.setName(user.getLogin());
           }
           user.setId(counter + 1);
-          users.put(user.getId(), user);
+          int id = user.getId();
+          users.put(id, user);
           log.debug("Добавил пользователя " + user);
           return user;
       } catch (ValidationException e){
