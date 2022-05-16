@@ -1,29 +1,31 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validations.ValidationException;
 
-import java.time.LocalDate;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final Map<Integer, User> users = new HashMap<Integer, User>();
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+  //  private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private int counter = 0;
-    //   Logbook logbook = Logbook.create();
+
 
     @GetMapping
     public List<User> findAll() {
@@ -33,29 +35,24 @@ public class UserController {
 
 
     @PostMapping
-    public User create(@RequestBody User user) throws ValidationException {
+    public User create(@Valid @NotNull @RequestBody User user)  {
         log.debug("Такой пользователь: " + user);
-      try {
-          validateUser(user);
+  //        validateUser(user);
           if (user.getName() == null) {
               user.setName(user.getLogin());
           }
           user.setId(counter + 1);
+          counter+=1;
           int id = user.getId();
           users.put(id, user);
           log.debug("Добавил пользователя " + user);
           return user;
-      } catch (ValidationException e){
-          log.debug(e.getMessage());
-          throw e;
-      }
+
     }
 
     @PutMapping
-    public User update(@RequestBody User user) throws ValidationException {
+    public User update(@Valid @NotNull @RequestBody User user)  {
         log.debug("Такой пользователь: " + user);
-      try {
-          validateUser(user);
           if (user.getName() == null) {
               user.setName(user.getLogin());
           }
@@ -67,25 +64,13 @@ public class UserController {
               log.debug("Нет пользователя с таким ID " + user);
               throw new ValidationException("Нет пользователя с таким id");
           }
-      } catch (ValidationException e){
-          log.debug(e.getMessage());
-          throw e;
-      }
     }
 
 
-    public void validateUser(User user) throws ValidationException {
-        if (user.getEmail().isBlank() || user.getEmail() == null) {
-            throw new ValidationException("пустой email");
-        } else if (!user.getEmail().contains("@")) {
-            throw new ValidationException("неверный формат email");
-        } else if (user.getLogin().contains(" ")) {
-            throw new ValidationException("в логине пробелы");
-        } else if (user.getLogin().isBlank() || user.getLogin() == null) {
-            throw new ValidationException("пустой логин");
-        } else if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("дата рождения в будущем");
-        }
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<String> exceptionHandler(ValidationException e) {
+        log.debug(e.getMessage());
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
