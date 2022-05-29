@@ -7,12 +7,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Data
 public class Film {
 
-    private int id;
+
+    private Set<Long> likes = new HashSet<>();
+    private long id;
     @NotNull(message = "Не должно быть null")
     @NotBlank(message = "Не должно быть пустым")
     private String name;
@@ -23,5 +28,6 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
+
 
 }
