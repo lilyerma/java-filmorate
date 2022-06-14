@@ -190,6 +190,64 @@ class FilmorateApplicationTests {
     }
 
 
+    @Test
+    void addFriend_valid_returns_200() throws Exception  {
+//        mockMvc.perform(MockMvcRequestBuilders.put("/users")
+//                        .content("{ \"id\":\"0\"," +
+//                                " \"email\": \"email@email.com\"," +
+//                                " \"login\": \"somelogin\"," +
+//                                " \"name\": \"somename\"," +
+//                                "\"birthday\": \"1967-03-25\"}")
+//                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+//        mockMvc.perform(MockMvcRequestBuilders.put("/users")
+//                .content("{ \"id\":\"0\"," +
+//                        " \"email\": \"otheremail@email.com\"," +
+//                        " \"login\": \"someotherlogin\"," +
+//                        " \"name\": \"somename\"," +
+//                        "\"birthday\": \"1977-03-25\"}")
+//                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}/friends/{friendId}",1,2)
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(200));
+
+    }
+
+    @Test
+    void addFriend_valid_returns_404() throws Exception  {
+        mockMvc.perform(MockMvcRequestBuilders.put("/users")
+                .content("{ \"id\":\"0\"," +
+                        " \"email\": \"email@email.com\"," +
+                        " \"login\": \"somelogin\"," +
+                        " \"name\": \"somename\"," +
+                        "\"birthday\": \"1967-03-25\"}")
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+        mockMvc.perform(MockMvcRequestBuilders.put("/users")
+                .content("{ \"id\":\"0\"," +
+                        " \"email\": \"otheremail@email.com\"," +
+                        " \"login\": \"someotherlogin\"," +
+                        " \"name\": \"somename\"," +
+                        "\"birthday\": \"1977-03-25\"}")
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}/friends/{friendId}",1,3)
+                        .content("")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(404));
+
+    }
+
+
+//    PUT /users/{id}/friends/{friendId} — добавление в друзья.
+//            DELETE /users/{id}/friends/{friendId} — удаление из друзей.
+//            GET /users/{id}/friends — возвращаем список пользователей, являющихся его друзьями.
+//            GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
+//            PUT /films/{id}/like/{userId} — пользователь ставит лайк фильму.
+//    DELETE /films/{id}/like/{userId} — пользователь удаляет лайк.
+//            GET /films/popular?count={count}
 
 
 
