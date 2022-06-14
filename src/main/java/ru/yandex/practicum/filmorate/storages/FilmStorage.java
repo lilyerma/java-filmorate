@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.storages;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.HashMap;
+
 public interface FilmStorage {
     Film create(Film film);
 
@@ -9,7 +11,7 @@ public interface FilmStorage {
 
     Film remove(Film film);
 
-    java.util.HashMap<Long, Film> getFilms();
+    HashMap<Long, Film> getFilms();
 
     boolean equals(Object o);
 

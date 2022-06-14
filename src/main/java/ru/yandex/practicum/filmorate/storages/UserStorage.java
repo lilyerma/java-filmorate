@@ -3,6 +3,9 @@ package ru.yandex.practicum.filmorate.storages;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public interface UserStorage {
     User create(User user);
 
@@ -12,7 +15,7 @@ public interface UserStorage {
 
     int getCounter();
 
-    java.util.Map<Long, User> getUsers();
+    HashMap<Long, User> getUsers();
 
     User getById(Long id);
     boolean equals(Object o);

@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
 
-    FilmStorage filmStorage;
-    UserStorage userStorage;
+    private FilmStorage filmStorage;
+    private UserStorage userStorage;
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
