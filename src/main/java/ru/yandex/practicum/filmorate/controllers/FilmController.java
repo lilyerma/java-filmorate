@@ -4,59 +4,87 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.services.FilmService;
+import ru.yandex.practicum.filmorate.storages.FilmStorage;
 import ru.yandex.practicum.filmorate.validations.ValidationException;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Slf4j
 @RestController
+@RequestMapping("/films")
 public class FilmController {
 
     private final LocalDate DATE = LocalDate.of(1895, 12, 28);
-    private final Map<Integer, Film> films = new HashMap<Integer, Film>();
- //   private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private int counter = 0;
+    private FilmStorage filmStorage;
+    private FilmService filmService;
+    private static final Logger log = LoggerFactory.getLogger(FilmController.class);
 
+    @Autowired
+    public FilmController(FilmStorage filmStorage, FilmService filmService){
+        this.filmStorage = filmStorage;
+        this.filmService = filmService;
+    }
 
-    @GetMapping("/films")
+    @GetMapping
     public List<Film> findAll() {
-        return new ArrayList<Film>(films.values());
+        return filmStorage.getFilms().values().stream().collect(Collectors.toList());
     }
 
-    @PostMapping(value = "/films")
-    public Film create(@Valid @NotNull@RequestBody Film film) {
-        log.debug("Такой фильм: " + film);
-            validateFilm(film);
-            film.setId(counter + 1);
-            counter+=1;
-            films.put(film.getId(), film);
-            log.debug("Добавил фильм " + film);
-            return film;
+    @GetMapping("{id}")
+    public Film getById(@PathVariable Long id) {
+        return filmStorage.getByID(id);
     }
 
-    @PutMapping(value = "/films")
-    public Film update(@Valid @NotNull @RequestBody Film film)  {
-        log.debug("Такой фильм: " + film);
-            validateFilm(film);
-            if (films.containsKey(film.getId())) {
-                films.put(film.getId(), film);
-                log.debug("Обновил фильм " + film);
-                return film;
-            } else {
-                log.debug("Нет фильма с таким ID " + film);
-                throw new ValidationException("Нет фильма для обновления");
-            }
+    @PostMapping
+    public Film create(@Valid @NotNull @RequestBody Film film) {
+        validateFilm(film);
+        return filmStorage.create(film);
     }
+
+    @PutMapping
+    public Film update(@Valid @NotNull @RequestBody Film film) {
+        validateFilm(film);
+        return filmStorage.update(film);
+    }
+
+    @DeleteMapping
+    public Film remove(@Valid @NotNull @RequestBody Film film) {
+        return filmStorage.remove(film);
+    }
+
+    @PutMapping("{id}/like/{userId}")
+    public Film addLike(
+            @PathVariable Long id,
+            @PathVariable Long userId
+    ){
+        return filmService.addLike(userId, id);
+    }
+
+    @DeleteMapping("{id}/like/{userId}")
+    public Map<Long, Long> removeLike(
+            @PathVariable Long id,
+            @PathVariable Long userId
+    ){
+        return filmService.removeLike(userId,id);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getTopFilms(@RequestParam(defaultValue = "10") int count){
+    return filmService.top10Films(count);
+    }
+
+
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<String> exceptionHandler(ValidationException e) {
@@ -69,5 +97,7 @@ public class FilmController {
             throw new ValidationException("релиз раньше 1895 года");
         }
     }
+
+
 
 }

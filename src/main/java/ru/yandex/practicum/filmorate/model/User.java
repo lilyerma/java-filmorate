@@ -7,11 +7,15 @@ import javax.validation.constraints.*;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class User {
 
-    private int id;
+
+    private long id;
+    private Set<Long> friends = new HashSet<>();
     @Email
     private String email;
     @NotNull(message = "Не должно быть null")
